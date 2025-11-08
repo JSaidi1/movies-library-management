@@ -4,35 +4,27 @@ from pathlib import Path
 # Add project root to sys.path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-import csv
 from datetime import datetime
 from common.models.movie import Movie
-from common.utils.general_csv_file_utils import add_new_line_to_file_csv, extract_csv
-from common.utils.specific_csv_file_utils import get_movie_by_id, show_movies_list
-from common.utils.file_utils import remove_all_file_empty_or_blank_lines
 from exceptions.movie_exceptions import InvalidTitleException, InvalidYearException, InvalidGenreException, InvalidAgeLimitException
 
 
-def add_movie(file_path):
+def add_movie():
     """
     This function adds a movie to the list of movies contained in the data file 'file_path'.
     """    
     title, production_year, genre, age_limit = request_movie_data()
 
     if all(v is not None for v in [title, genre, production_year, age_limit]):
+        
         # Create a Movie object:
         movie_object = Movie(title, production_year, genre, age_limit)
 
         try:
-
-            # Remove all empty or blank lines in the file:
-            remove_all_file_empty_or_blank_lines(file_path)
-
-            # Add(write) the new line at the end of file:
-            add_new_line_to_file_csv(file_path, [movie_object.id, movie_object.title, movie_object.production_year, movie_object.genre, movie_object.age_limit])
+            movie_object.save_to_csv()
 
         except Exception as e:
-            print(f"\nUnexpected error when adding a new line in the csv file {file_path}: {e}\n")
+            print(f"\nUnexpected error when adding a new line in the csv file {Movie.file_path}: {e}\n")
         
         else:
             print(f"\nThe movie '{movie_object}' was add succesfully.\n")
@@ -109,8 +101,8 @@ def request_movie_data()->tuple:
 
 
 if __name__=="__main__":
-    file_path = "common/data/movies.csv"
+    # file_path = "common/data/movies.csv"
 
-    add_movie(file_path)
+    add_movie()
     # modify_movie(file_path)
     
