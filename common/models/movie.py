@@ -6,7 +6,7 @@ from typing import List
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from common.utils.csv_file_utils import extract_csv
 from common.utils.file_utils import remove_all_file_empty_or_blank_lines
-from common.enums.movie_operations import MovieOperations
+from common.enums.movie_enums import AgeLimit, MovieOperations
 
 
 
@@ -159,7 +159,7 @@ class Movie:
     @staticmethod
     def find_by_title(title_movie: str) -> List[Movie]:
         """
-        This function return the movie informations if it exists in the list (if not exists it returns an empty dict()). It returns a movie dictionary like {"identifier": "1", "title": "Titanic", ...}
+        This function return a list of movies if they exists in the list (if not exists it returns an empty list).
         """
         movies_list = []
 
@@ -175,9 +175,107 @@ class Movie:
                 movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
                 
         return movies_list
+    
+    @staticmethod
+    def find_by_age_limit(age_limit: float) -> List[Movie]:
+        """
+        This function returns a list of movies if their age limit is equals to the age limit given in the input.
+        """
+        movies_list = []
 
-        
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
 
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # Find Movies list:
+        for line in csv_extracted_data_list:
+            if age_limit == float(line["age_limit"]):
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+
+    @staticmethod
+    def find_by_age_limit_less_than(age_limit: float) -> List[Movie]:
+        """
+        This function returns a list of movies if their age limit lower than the age limit given in the input.
+        """
+        movies_list = []
+
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
+
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # Find Movies list:
+        for line in csv_extracted_data_list:
+            if age_limit > float(line["age_limit"]):
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+    
+    @staticmethod
+    def find_by_age_limit_less_than_or_equals(age_limit: float) -> List[Movie]:
+        """
+        This function returns a list of movies if their age limit is lower than or equals the age limit given in the input.
+        """
+        movies_list = []
+
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
+
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # Find Movies list:
+        for line in csv_extracted_data_list:
+            if age_limit >= float(line["age_limit"]):
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+    
+    @staticmethod
+    def find_by_age_limit_greater_than(age_limit: float) -> List[Movie]:
+        """
+        This function returns a list of movies if their age limit is greather than the age limit given in the input.
+        """
+        movies_list = []
+
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
+
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # Find Movies list:
+        for line in csv_extracted_data_list:
+            if age_limit < float(line["age_limit"]):
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+    
+    @staticmethod
+    def find_by_age_limit_greater_than_or_equals(age_limit: float) -> List[Movie]:
+        """
+        This function returns a list of movies if their age limit is greather than or equals the age limit given in the input.
+        """
+        movies_list = []
+
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
+
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # Find Movies list:
+        for line in csv_extracted_data_list:
+            if age_limit <= float(line["age_limit"]):
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+    
 
 if __name__ == "__main__":
     print("in /write/movie.py")
@@ -190,7 +288,13 @@ if __name__ == "__main__":
     # movie_1 = Movie("Title1", 1970, "Drama", 18)
     # print(Movie.movie_object_operation_is(MovieOperations.ADD.name))
 
-    list_movies = Movie.find_by_title("The Silence of the Lambs")
+    # list_movies = Movie.find_by_title("The Silence of the Lambs")
+    # list_movies = Movie.find_by_age_limit(15)
+    # list_movies = Movie.find_by_age_limit_lower_than_or_equals(6)
+    # list_movies = Movie.find_by_age_limit_greater_than(17)
+    list_movies = Movie.find_by_age_limit_greater_than_or_equals(6)
     for movie in list_movies:
         print("Movies : ", movie)
+
+    
     
