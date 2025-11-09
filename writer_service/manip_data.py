@@ -6,6 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from datetime import datetime
 from common.models.movie import Movie
+from common.utils.csv_file_utils import extract_csv
 from exceptions.movie_exceptions import InvalidTitleException, InvalidYearException, InvalidGenreException, InvalidAgeLimitException
 
 
@@ -29,6 +30,46 @@ def add_movie():
         else:
             print(f"\nThe movie '{movie_object}' was add succesfully.\n")
 
+
+def modify_movie():
+    """
+    This function modify a movie from the list of movies contained in the data file.
+    """  
+    # Extract movies data from the csv file:
+    csv_extracted_data_list = extract_csv(Movie.file_path)
+ 
+    # Show movies list:
+    Movie.show_movies_list(csv_extracted_data_list)
+    
+    # Request the ID of the movie to be modified:
+    id_movie_to_modify = input("Enter the Id (number) of the movie to be modified : ")
+
+    # Check if this id movie exists on the list:
+    if Movie.get_movie_by_id(id_movie_to_modify, csv_extracted_data_list):
+        print(f"\nYou have chosen to replace the information of this movie : {Movie.get_movie_by_id(id_movie_to_modify, csv_extracted_data_list)}\n")
+
+        # Cast id_movie_to_modify to int:
+        id_movie_to_modify = int(id_movie_to_modify)
+
+        # Request all movie information (complete replacement):
+        title, production_year, genre, age_limit = request_movie_data()
+
+        if all(v is not None for v in [title, genre, production_year, age_limit]):
+            new_movie_dict = {"id": id_movie_to_modify, "title": title, "production_year": production_year, "genre": genre, "age_limit": age_limit}
+            
+            try:    
+                Movie.replace_movie(new_movie_dict, id_movie_to_modify)
+
+            except Exception as e:
+                print(f"\nError: Cannot replace old movie which id is '{id_movie_to_modify}' by new movie '{new_movie_dict}' : {e}\n")
+            
+            else:
+                print(f"\nThe movie which id is '{id_movie_to_modify}' was succesfully replaced by the new movie '{new_movie_dict}'\n")
+    else:
+        print(f"\nError: The movie with the id = {id_movie_to_modify} does not exist on the movies list.\n")
+
+
+    
 
 
 # --------------------------------- Usuful functions ------------------------------------------
@@ -92,7 +133,7 @@ def request_movie_data()->tuple:
         e.display_exception()
     
     else:
-        print("\nMovie data entry was successful.")
+        print("\nMovie data entry was successful.\n")
 
     return title, production_year, genre, age_limit
 # ---------------------------------------------------------------------------------------------
@@ -103,6 +144,6 @@ def request_movie_data()->tuple:
 if __name__=="__main__":
     # file_path = "common/data/movies.csv"
 
-    add_movie()
-    # modify_movie(file_path)
+    # add_movie()
+    modify_movie()
     

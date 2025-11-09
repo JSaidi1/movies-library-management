@@ -1,10 +1,15 @@
 import csv
 
+from common.utils.file_utils import remove_all_file_empty_or_blank_lines
+
 
 def extract_csv(file_path: str) -> list:
     """
     This function extracts data from a csv file: it returns a list of data dictionaries [{}, {}, ...].
     """
+    # Remove all file empty or blank lines:
+    remove_all_file_empty_or_blank_lines(file_path)
+    
     data = []
     with open(file_path, "r") as file:
         csv_reader = csv.DictReader(file)
