@@ -1,27 +1,33 @@
 import sys
-from pathlib import Path
-
-# Add project root to sys.path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
-import csv
 import os
+import csv
 import tempfile
-
+from typing import List
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+from common.utils.csv_file_utils import extract_csv
 from common.utils.file_utils import remove_all_file_empty_or_blank_lines
+from common.enums.movie_operations import MovieOperations
+
 
 
 class Movie:
-    id = 30  # will be updated from CSV
+    id_cpt = 30  # will be updated from CSV
     file_path = "common/data/movies.csv"
+    operation = MovieOperations.DEFAULT # Default operation status
 
-    def __init__(self, title: str, production_year: int, genre: str, age_limit: int):
+    def __init__(self, id: int, title: str, production_year: int, genre: str, age_limit: int):
+        self.id = id
         self.title = title
         self.production_year = production_year
         self.genre = genre
         self.age_limit = age_limit
 
-        Movie.id = Movie.load_last_id() + 1
+        if Movie.operation.ADD:
+            Movie.id = Movie.load_last_id() + 1
+
+    def __str__(self):
+        return f"Movie: identifier: {self.id} - title: {self.title} - production year: {self.production_year} - genre: {self.genre} - age limit: {self.age_limit}"
+
 
     @staticmethod
     def load_last_id():
@@ -149,13 +155,42 @@ class Movie:
         
         # Replace original file atomically (safe even if program crashes)
         os.replace(temp_path, Movie.file_path)
-        
+    
+    @staticmethod
+    def find_by_title(title_movie: str) -> List[Movie]:
+        """
+        This function return the movie informations if it exists in the list (if not exists it returns an empty dict()). It returns a movie dictionary like {"identifier": "1", "title": "Titanic", ...}
+        """
+        movies_list = []
 
-    def __str__(self):
-        return f"Movie: identifier: {Movie.id} - title: {self.title} - production year: {self.production_year} - genre: {self.genre} - age limit: {self.age_limit}"
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
+
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # find Movie with title:
+        for line in csv_extracted_data_list:
+            if title_movie.lower() == str(line["title"]).lower():
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+
+        
 
 
 if __name__ == "__main__":
     print("in /write/movie.py")
 
-    movie_1 = Movie("Title1", 1970, "Drama", 18)
+    file_path = "common/data/movies.csv"
+
+    # Extract movies data from the csv file:
+    csv_extracted_data_list = extract_csv(Movie.file_path)
+
+    # movie_1 = Movie("Title1", 1970, "Drama", 18)
+    # print(Movie.movie_object_operation_is(MovieOperations.ADD.name))
+
+    list_movies = Movie.find_by_title("The Silence of the Lambs")
+    for movie in list_movies:
+        print("Movies : ", movie)
+    
