@@ -6,6 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 import csv
 import os
+import tempfile
 
 from common.utils.file_utils import remove_all_file_empty_or_blank_lines
 
@@ -127,6 +128,28 @@ class Movie:
         with open(Movie.file_path, "w", newline="") as f:
             csv.writer(f).writerows(rows)
     
+    @staticmethod
+    def delete_csv_row_by_id(id_movie:str):
+        """
+        This static method remove a movie from CSV file based on its identifier.
+        """
+        # Create a secure temporary file in the same directory
+        dir_name = os.path.dirname(Movie.file_path)
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, newline="", dir=dir_name, encoding="utf-8") as temp_file:
+            temp_path = temp_file.name
+            
+            with open(Movie.file_path, "r", newline="", encoding="utf-8") as f_in:
+                reader = csv.DictReader(f_in)
+                writer = csv.DictWriter(temp_file, fieldnames=reader.fieldnames)
+                writer.writeheader()
+                
+                for row in reader:
+                    if row["id"] != id_movie:
+                        writer.writerow(row)
+        
+        # Replace original file atomically (safe even if program crashes)
+        os.replace(temp_path, Movie.file_path)
+        
 
     def __str__(self):
         return f"Movie: identifier: {Movie.id} - title: {self.title} - production year: {self.production_year} - genre: {self.genre} - age limit: {self.age_limit}"

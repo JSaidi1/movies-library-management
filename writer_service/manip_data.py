@@ -68,8 +68,38 @@ def modify_movie():
     else:
         print(f"\nError: The movie with the id = {id_movie_to_modify} does not exist on the movies list.\n")
 
-
+def delete_movie():
     
+    # Show movies list:
+    show_movies_list()
+
+    # Request the ID of the movie to be deleted:
+    id_movie_to_delete = input("Enter the Id (number) of the movie to be deleted : ")
+    # Check input:
+    if len(id_movie_to_delete) < 200:
+
+        # Check if this id movie exists on the list:
+            # Extract movies data from the csv file:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+            # Movie to delete dict():
+        movie_to_delete_dict = Movie.get_movie_by_id(id_movie_to_delete, csv_extracted_data_list)
+
+        if movie_to_delete_dict: # not empty: the id movie exists in the list
+            print(f"\nYou have chosen to delete the information of this movie : {movie_to_delete_dict}\n")
+                
+            try:    
+                Movie.delete_csv_row_by_id(id_movie_to_delete)
+
+            except Exception as e:
+                print(f"\nError: Cannot delete movie '{movie_to_delete_dict}' : {e}\n")
+                
+            else:
+                print(f"The movie '{movie_to_delete_dict}' was succesfully deleted.\n")
+
+        else:
+            print(f"\nError: The movie with the id = {id_movie_to_delete} does not exist on the movies list.\n")
+    else:
+        print(f"\nError: id length cannot exceed 200 characters. You have entered {len(id_movie_to_delete)} charecter.\n")
 
 
 # --------------------------------- Usuful functions ------------------------------------------
@@ -136,6 +166,18 @@ def request_movie_data()->tuple:
         print("\nMovie data entry was successful.\n")
 
     return title, production_year, genre, age_limit
+
+
+def show_movies_list():
+    """
+    This function shows movies which are present in the csv file.
+    """
+    # Extract movies data from the csv file:
+    csv_extracted_data_list = extract_csv(Movie.file_path)
+ 
+    # Show movies list:
+    Movie.show_movies_list(csv_extracted_data_list)
+
 # ---------------------------------------------------------------------------------------------
     
 
@@ -145,5 +187,6 @@ if __name__=="__main__":
     # file_path = "common/data/movies.csv"
 
     # add_movie()
-    modify_movie()
+    # modify_movie()
+    delete_movie()
     
