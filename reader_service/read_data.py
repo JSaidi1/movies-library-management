@@ -67,7 +67,28 @@ def find_movies_by_genre():
     else:
         print(f"\nError: genre movie length cannot exceed 50 characters. You have entered {len(genre)} charecter.\n")
 
-       
+def find_movies_by_production_year_between_start_and_end_year():
+    """
+    This function allows you to find a list of movies in the list which production year is between a start and end year.
+    """
+    # Request the start and end year:
+    start_year = input("Enter the start year : ")
+    end_year = input("Enter the end year : ")
+
+    if start_year.isdigit() and end_year.isdigit():
+
+        if int(start_year) < int(end_year):
+
+            for movie in Movie.find_by_production_year_between_start_and_end_year(int(start_year), int(end_year)):
+                print(movie)
+            print("\n")
+        
+        else:
+            print(f"\nstart year must be less than end year. You entered start_year = {start_year} and end_year = {end_year}")
+
+    else:
+        print(f"\nInvalid start or end year. You entered start_year = {start_year} and end_year = {end_year}")
+
 
 
 if __name__=="__main__":
@@ -75,4 +96,5 @@ if __name__=="__main__":
 
     # find_movie_by_title()
     # find_movies_with_age_limit_less_than_or_equal()
-    find_movies_by_genre()
+    # find_movies_by_genre()
+    find_movies_by_production_year_between_start_and_end_year()

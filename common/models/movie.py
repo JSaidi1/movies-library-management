@@ -295,7 +295,47 @@ class Movie:
                 movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
                 
         return movies_list
+    
+    @staticmethod
+    def find_by_production_year(production_year: int) -> List[Movie]:
+        """
+        This function returns a list of movies with a specific production year.
+        """
+        movies_list = []
 
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
+
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # Find Movies list:
+        for line in csv_extracted_data_list:
+            if production_year == int(line["production_year"]):
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+    
+    @staticmethod
+    def find_by_production_year_between_start_and_end_year(start_year: int, end_year: int):
+        """
+        This function returns a list of movies between start and end year.
+        """
+        movies_list = []
+
+        # Remove all file empty or blank lines:
+        remove_all_file_empty_or_blank_lines(Movie.file_path)
+
+        # Extract line from csv:
+        csv_extracted_data_list = extract_csv(Movie.file_path)
+
+        # Find Movies list:
+        for line in csv_extracted_data_list:
+            if start_year <= int(line["production_year"]) <= end_year:
+                movies_list.append(Movie(line["id"], line["title"], line["production_year"], line["genre"], line["age_limit"]))
+                
+        return movies_list
+    
 
 if __name__ == "__main__":
     print("in /write/movie.py")
@@ -313,7 +353,9 @@ if __name__ == "__main__":
     # list_movies = Movie.find_by_age_limit_lower_than_or_equals(6)
     # list_movies = Movie.find_by_age_limit_greater_than(17)
     # list_movies = Movie.find_by_age_limit_greater_than_or_equals(6)
-    list_movies = Movie.find_by_genre("Crime")
+    # list_movies = Movie.find_by_genre("Crime")
+    # list_movies = Movie.find_by_production_year(1993)
+    list_movies = Movie.find_by_production_year_between_start_and_end_year(1970, 2010)
     for movie in list_movies:
         print("Movies : ", movie)
 
