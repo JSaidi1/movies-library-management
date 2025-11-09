@@ -50,6 +50,23 @@ def find_movies_with_age_limit_less_than_or_equal():
     else:
         print(f"\nInvalid age limit (It must be a positive number) not {age_limit}")
 
+def find_movies_by_genre():
+    """
+    This function returns a list of movies with a specific genre.
+    """
+    
+    # Request the genre of movies to find:
+    genre = input("Enter the genre of movie(s) to find : ")
+
+    if len(genre) <= 50:
+        
+        for movie in Movie.find_by_genre(genre):
+            print(movie)
+        print("\n")
+
+    else:
+        print(f"\nError: genre movie length cannot exceed 50 characters. You have entered {len(genre)} charecter.\n")
+
        
 
 
@@ -57,4 +74,5 @@ if __name__=="__main__":
     print("in read service")
 
     # find_movie_by_title()
-    find_movies_with_age_limit_less_than_or_equal()
+    # find_movies_with_age_limit_less_than_or_equal()
+    find_movies_by_genre()
